@@ -1,0 +1,8 @@
+Module Number 			= C1750BNC1
+Number of LAN ports 		= 2
+Number of LAN2 ports 		= 2 
+Number of LAN3 ports 		= 6 
+H/W version 			=   Ver3
+Number of bypass circuits	= 3 bypass
+Number of SKU			= 0xff 
+
