@@ -60,8 +60,8 @@ done
 read choice
 
 function show_mode(){
-	# Delete old file. 
-	if [ -f "$mode_file" ]; then	
+	# Delete old file.
+	if [ -f "$mode_file" ]; then
 			rm $mode_file
 	fi
 
@@ -70,7 +70,7 @@ function show_mode(){
 			ver=$(ls | head -n 10 | tail -1)
 			cd $ver
 			awk -v name="${items_array["$i"]}" '/main_param/ {
-							getline; 
+							getline;
 							#print substr($0, 15, 2)
 							target = substr($0, 15, 2);
 							#print target
@@ -83,7 +83,7 @@ function show_mode(){
 								}else if(num == 1) {
 									print name": driver mode"
 								}else {
-									print name":" num 
+									print name":" num
 								}
 						}
 				}' param.h | tee -a $mode_file
@@ -98,23 +98,23 @@ function set_mode() {
 			ver=$(ls | head -n 10 | tail -1)
 			cd $ver
 			awk -v driver="$mode" '/main_param_bin\[\]/{
-			print; getline; 
-			$0=substr($0,1,15) driver substr($0,17); 
-			print; 
+			print; getline;
+			$0=substr($0,1,15) driver substr($0,17);
+			print;
 			next
-		}1' param.h > temp 
+		}1' param.h > temp
 		mv temp param.h
 		cd ../../
 	done
 }
 
 function run_function() {
-	
-	# Delete old csv file. 
+
+	# Delete old csv file.
 	if [ -f "../"$CSV_folder"/${items_array["$1"]}.csv" ]; then
 		rm ../"$CSV_folder"/${items_array["$1"]}.csv
 	fi
-	
+
 	cd ${items_array["$1"]}
 	ver=$(ls | head -n 10 | tail -1)
 	cd ..
@@ -122,20 +122,20 @@ function run_function() {
 	echo "----------- Test ${items_array[$1]} ---------------------"
 	if [[ "${items_array[$1]}" == "fan" || "${items_array[$1]}" == "temp" || "${items_array[$1]}" == "voltage" || "${items_array[$1]}" == "psu" ]]; then
 		./../hwmnt.sh ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
-    	
+
     	# Check status of sensors
     	pass_cnt=$(cat "../"$CSV_folder"/${items_array["$1"]}.csv" | grep "PASS" | wc -l)
     	if [ $pass_cnt -eq 0 ]; then
-    		return		
+    		return
     	fi
-    	    	
+
     	## Add external tests. (fan control and power cord unplugged.)
     	if [ "${items_array[$1]}" == "fan" ];then
     		./../fanctrl.sh ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
     	elif [ "${items_array[$1]}" == "psu" ]; then
     		./../psuex.sh ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
     	fi
-    
+
     else
     	pwd
     	## 0: no button test, 1: test button
@@ -143,14 +143,14 @@ function run_function() {
     		./../"${items_array[$1]}".sh ${items_array["$1"]}/$ver ../"$CSV_folder"/"${items_array[$1]}".csv "${items_array[$1]}" $lcmbtn
     	else
     		./../"${items_array[$1]}".sh ${items_array["$1"]}/$ver ../"$CSV_folder"/"${items_array[$1]}".csv "${items_array[$1]}"
-    	fi    		
+    	fi
 	fi
 }
 
 if [ "$choice" -lt "${#items_array[@]}" ]; then
 
 	#echo $choice
-	
+
 	if [ "$choice" -eq "0" ]; then
 		show_mode
 	elif [ "$choice" -eq "1" ]; then
@@ -162,7 +162,7 @@ if [ "$choice" -lt "${#items_array[@]}" ]; then
 			run_function $i
 		done
 	elif [ "$choice" -eq "4" ]; then
-			# Delete old csv file. 
+			# Delete old csv file.
 			if [ -f "../"$CSV_folder"/All_Total.csv" ]; then
 				rm ../"$CSV_folder"/All_Total.csv
 			fi
@@ -171,4 +171,3 @@ if [ "$choice" -lt "${#items_array[@]}" ]; then
 		run_function $choice
 	fi
 fi
-

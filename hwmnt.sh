@@ -7,36 +7,36 @@ rm -rf $log_file
 ##echo $path
 
 root_path=$(pwd)
-csv_file=${root_path}/$log_file 
-label_file=${root_path}/label.tmp  
+csv_file=${root_path}/$log_file
+label_file=${root_path}/label.tmp
 cd $path
 
-echo -e "--- Test make ---" | tee -a $csv_file 
+echo -e "--- Test make ---" | tee -a $csv_file
 #### Building test : make clean
-make clean  | tee -a $csv_file 
+make clean  | tee -a $csv_file
 hwmnt_check_flag=$(cat $csv_file | grep "Error" | wc -l)
 if [ $hwmnt_check_flag -ne 0 ]; then
-    echo "Fail : make clean failed." | tee -a $csv_file 
-    echo "FAIL" | tee -a $csv_file 
-    exit 
+    echo "Fail : make clean failed." | tee -a $csv_file
+    echo "FAIL" | tee -a $csv_file
+    exit
 fi
 
 #### Building test : make
-make  | tee -a $csv_file  
+make  | tee -a $csv_file
 hwmnt_check_flag=$(cat $csv_file | grep "Error" | wc -l)
 if [ $hwmnt_check_flag -ne 0 ]; then
-    echo "Fail : make failed." | tee -a $csv_file 
-    echo "FAIL" | tee -a $csv_file 
-    exit 
+    echo "Fail : make failed." | tee -a $csv_file
+    echo "FAIL" | tee -a $csv_file
+    exit
 fi
 
-echo "-----------------" | tee -a $csv_file  
+echo "-----------------" | tee -a $csv_file
 
 echo "$path/$sample"  |  tee -a $csv_file
-./$sample  | tee -a $csv_file 
+./$sample  | tee -a $csv_file
 
 echo "$path/$sample -r " | tee -a $csv_file
-./$sample -r  | tee -a $csv_file 
+./$sample -r  | tee -a $csv_file
 
 echo -e "\n$path/$sample -c " | tee -a $csv_file
 ./$sample -c  | tee -a $csv_file
@@ -121,12 +121,12 @@ function check_label() {
     for item in "${label_array[@]}"
     do
        ###echo "$item"
-        if [ "$item" = "$1" ]; then	        
+        if [ "$item" = "$1" ]; then
                 return 0
         fi
     done
 
-    return 1  
+    return 1
 }
 
 declare -i label_err=0
@@ -136,9 +136,9 @@ while read -r line
 do
     ###printf '%s\n' "$line"
     check_label "$line"
-    lable_check_flag=$?   
+    lable_check_flag=$?
 
-    ###echo $lable_check_flag    
+    ###echo $lable_check_flag
     if [ "$lable_check_flag" -eq 1 ]; then
         label_err=1
     fi
