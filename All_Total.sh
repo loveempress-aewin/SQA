@@ -3,7 +3,7 @@
 ################################################
 path=$1
 root_path=$(pwd)
-csv_file=${root_path}/$path/All_Total.csv 
+csv_file=${root_path}/$path/All_Total.csv
 mode_file=${root_path}/$path/mode_info.tmp
 
 if [ ! -d "$path" ]; then
@@ -39,7 +39,7 @@ if [ -e "/dev/ipmi0" ]; then
 	if [ "$MFG_ID"  ==  "0000cc" ]; then
 		echo "AMI:"
 	elif [ "$MFG_ID"  ==  "020202" ]; then
-		BYO_VER=$(ipmitool raw 0x30 0x01 2>&1)  
+		BYO_VER=$(ipmitool raw 0x30 0x01 2>&1)
 		if [[ $BYO_VER != *"Invalid"* ]]; then
 			echo "BYO:"
 		fi
@@ -47,17 +47,17 @@ if [ -e "/dev/ipmi0" ]; then
 fi
 
 if [ -e "/dev/ipmi0" ]; then
-	ver=$(ipmitool raw 0x1e 0x01 0x00 2>&1)  
+	ver=$(ipmitool raw 0x1e 0x01 0x00 2>&1)
 	echo "$ver" | awk '{
 		print("BMC version :")
 		name_end=0
 		for (i=1; i<=NF; i++) {
 			dec = strtonum("0x"$i)
-			#echo $dec			
+			#echo $dec
 			if (dec >=32 && dec <= 126) {
 				printf("%c", dec)
 			}else{
-				if( name_end == 0 ) 
+				if( name_end == 0 )
 				{
 					printf(" ")
 					name_end=1
@@ -65,12 +65,12 @@ if [ -e "/dev/ipmi0" ]; then
 				printf("%s.", dec)
 			}
 		}
-}'  | tee -a $csv_file  
+}'  | tee -a $csv_file
 
 fi
 
 echo -e "\n\n---- Test mode ----" | tee -a $csv_file
-cat $mode_file | tee -a $csv_file 
+cat $mode_file | tee -a $csv_file
 
 echo -e "\n\n---- Test Result ----" | tee -a $csv_file
 
@@ -82,12 +82,12 @@ for file in *.csv; do
 	    	#echo "file:$file, pass count: ${pass_number_arr[$i]}"
 	    	pass_cnt=$(cat $file | grep "PASS" | wc -l)
 	    	name_no_ext="${file%.csv}"
-	
+
 	    	if [ "$pass_cnt" = "${pass_number_arr[$i]}" ]; then
 	    		printf "%-12s: PASS\n" "$name_no_ext" | tee -a  $csv_file
 	    		break
 	    	else
-	    		printf "%-12s: FAIL\n" "$name_no_ext" | tee -a  $csv_file	
+	    		printf "%-12s: FAIL\n" "$name_no_ext" | tee -a  $csv_file
 	    	fi
 	    fi
 	done

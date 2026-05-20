@@ -8,46 +8,46 @@ rm -rf $log_file
 
 root_path=$(pwd)
 csv_file=${root_path}/$log_file
-nicee_file=${root_path}/../nicee.tmp   
-mb_param=${root_path}/../nicee_mb_param.txt  
-slot_param=${root_path}/../nicee_slot_param.txt  
+nicee_file=${root_path}/../nicee.tmp
+mb_param=${root_path}/../nicee_mb_param.txt
+slot_param=${root_path}/../nicee_slot_param.txt
 cd $path
 
 declare -i nicee_err=0
 
-echo -e "--- Test make ---" | tee -a $csv_file 
+echo -e "--- Test make ---" | tee -a $csv_file
 #### Building test : make clean
-make clean  | tee -a $csv_file 
+make clean  | tee -a $csv_file
 nicee_check_flag=$(cat $csv_file | grep "Error" | wc -l)
 if [ $nicee_check_flag -ne 0 ]; then
     nicee_err=1
-    echo "Fail : make clean failed." | tee -a $csv_file 
-    echo "FAIL" | tee -a $csv_file 
-    exit 
+    echo "Fail : make clean failed." | tee -a $csv_file
+    echo "FAIL" | tee -a $csv_file
+    exit
 fi
 
 #### Building test : make
-make  | tee -a $csv_file  
+make  | tee -a $csv_file
 nicee_check_flag=$(cat $csv_file | grep "Error" | wc -l)
 if [ $nicee_check_flag -ne 0 ]; then
     nicee_err=1
-    echo "Fail : make failed." | tee -a $csv_file 
-    echo "FAIL" | tee -a $csv_file 
-    exit 
+    echo "Fail : make failed." | tee -a $csv_file
+    echo "FAIL" | tee -a $csv_file
+    exit
 fi
 
-echo "-----------------" | tee -a $csv_file  
+echo "-----------------" | tee -a $csv_file
 
 # Get slot number.
-./nicee > $nicee_file 
+./nicee > $nicee_file
 ./nicee | tee -a $csv_file
 
 # Check help files
 nicee_show=$(cat $nicee_file | grep -e "-show")
 if [ -z "$nicee_show" ]; then
 	nicee_err=1
-	echo "Fail : help() is error." | tee -a $csv_file 
-	echo "FAIL" | tee -a $csv_file 
+	echo "Fail : help() is error." | tee -a $csv_file
+	echo "FAIL" | tee -a $csv_file
 	exit
 fi
 
@@ -78,9 +78,9 @@ for (( i = 0; i < len; i++)); do
     nicee_mb_param_array[i]=$(cat $mb_param | grep "${mb_labels[i]}" | cut -d"=" -f 2 | tr -d " ")
 done
 
-echo -e "\n------ Mother Board ------------ "  | tee -a $csv_file 
+echo -e "\n------ Mother Board ------------ "  | tee -a $csv_file
 # Read MB data from eeprom
-./nicee -show 0  | tee -a $csv_file 
+./nicee -show 0  | tee -a $csv_file
 ./nicee -show 0 > $nicee_file
 for (( i = 0; i < len; i++)); do
     nicee_mb_data_array[i]=$(cat $nicee_file | grep "${mb_labels[i]}" | cut -d"=" -f 2 | tr -d " ")
@@ -95,10 +95,10 @@ done
 while read -r line
 do
     #printf '%s\n' "$line"
-    # skip space line. 
+    # skip space line.
     #[[ -z "$line" ]] && continue
- 
-    slot_id=$((slot_id + 1)) 	  	
+
+    slot_id=$((slot_id + 1))
     read -a elements <<< "$line"
 
     index=0
@@ -115,12 +115,12 @@ done < "$slot_param"
 len=${#slot_labels[@]}
 if [ "$nicee_number" -ne 0 ]; then
     for (( i = 1; i <= $nicee_number; i++)); do
-        echo -e "\n------ Slot$i ------------ "  | tee -a $csv_file 
-        ./nicee -show $i  | tee -a $csv_file 
-        ./nicee -show $i > $nicee_file 
+        echo -e "\n------ Slot$i ------------ "  | tee -a $csv_file
+        ./nicee -show $i  | tee -a $csv_file
+        ./nicee -show $i > $nicee_file
         if [ ! -s $nicee_file ]; then
             nicee_err=1
-            echo "Fail:slot$i is empty."  | tee -a $csv_file 
+            echo "Fail:slot$i is empty."  | tee -a $csv_file
         else
             for (( j = 0; j < ${nicee_slot_counts_array[$i]}; j++)); do
                 nicee_slot_data_array[j]=$(cat $nicee_file | grep "${slot_labels[j]}" |  cut -d"=" -f 2 | tr -d ' ')
@@ -137,8 +137,8 @@ fi
 
 #### Test result
 if [ "$nicee_err" -eq 0 ]; then
-    echo "PASS" | tee -a $csv_file 
+    echo "PASS" | tee -a $csv_file
 else
-    echo "FAIL" | tee -a $csv_file 
+    echo "FAIL" | tee -a $csv_file
 fi
 
