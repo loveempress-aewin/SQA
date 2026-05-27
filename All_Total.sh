@@ -17,7 +17,7 @@ fi
 #echo $csv_file
 
 item_label_arr=("buzzer.csv" "bypass.csv" "caseopen.csv" "fan.csv" "gpio.csv" "lcmcom.csv" "led.csv" "nicee.csv" "psu.csv" "temp.csv" "voltage.csv" "wdt.csv")
-pass_number_arr=(1            1            1              3         1          1            1             1       5          2         2                  1)
+pass_number_arr=(1            1            1              3         1          1            1             1       3          2         2                  1)
 
 echo "---- Information ----" | tee -a $csv_file
 #1. BIOS Version
