@@ -8,6 +8,11 @@ declare -a ItemArray
 #chmod 777 to all *.sh
 chmod 777 *.sh
 
+#### mkdir csv dir
+if [[ ! -d csv ]]; then
+    mkdir csv
+fi
+
 #delete tmp files
 for f in *.tmp; do
 	if [ -s "$f" ]; then
