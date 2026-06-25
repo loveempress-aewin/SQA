@@ -5,6 +5,7 @@ path=$1
 root_path=$(pwd)
 csv_file=${root_path}/$path/All_Total.csv
 mode_file=${root_path}/$path/mode_info.tmp
+ipmi_file=${root_path}/$path/ipmi_sdr.csv
 
 if [ ! -d "$path" ]; then
     echo "Error: Directory $path does not exist."
@@ -23,6 +24,19 @@ echo "---- Information ----" | tee -a $csv_file
 #1. BIOS Version
 bios_ver=$(dmidecode -t 1 | grep "Version" | tr -d ' ' | cut -d':' -f2)
 echo "BIOS version : $bios_ver" | tee -a $csv_file
+
+echo "---- DMItable type 11 ----" >> $csv_file
+#1-1 dmitable
+v_dmitalbe=$(dmidecode -t 11)
+echo -e "DMI information\n${v_dmitalbe}" >> $csv_file
+
+echo "================ IPMI ================" >>${ipmi_file}
+if ipmitool user list 1 >/dev/null 2>&1;then
+    ipmi_sdr=$(ipmitool sdr)
+    echo ${ipmi_sdr} >> ${ipmi_file}
+else
+    echo "no ipmi" >> ${ipmi_file}
+fi
 
 #2. OS version
 os_ver=$(cat /etc/os-release | grep "VERSION" | tr -d ' ')
