@@ -6,6 +6,7 @@ root_path=$(pwd)
 csv_file=${root_path}/$path/All_Total.csv
 mode_file=${root_path}/$path/mode_info.tmp
 ipmi_file=${root_path}/$path/ipmi_sdr.csv
+com_file=${root_path}/$path/com_config.csv
 
 if [ ! -d "$path" ]; then
     echo "Error: Directory $path does not exist."
@@ -36,6 +37,17 @@ if ipmitool user list 1 >/dev/null 2>&1;then
     echo ${ipmi_sdr} >> ${ipmi_file}
 else
     echo "no ipmi" >> ${ipmi_file}
+fi
+
+if setserial -a /dev/ttyS0 >/dev/null 2>&1;then
+    # echo "yes setserial";
+    #### TODO : need to clean history : com_config.csv (comport log)
+    echo "/dev/ttyS0" >> ${com_file};
+    setserial -a /dev/ttyS0 >> ${com_file}
+    setserial -a /dev/ttyS1 >> ${com_file}
+    setserial -a /dev/ttyS2 >> ${com_file}
+else
+    echo "ERROR";####TODO call install script
 fi
 
 #2. OS version
@@ -106,6 +118,3 @@ for file in *.csv; do
 	    fi
 	done
 done
-
-
-
