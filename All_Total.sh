@@ -7,6 +7,9 @@ csv_file=${root_path}/$path/All_Total.csv
 mode_file=${root_path}/$path/mode_info.tmp
 ipmi_file=${root_path}/$path/ipmi_sdr.csv
 com_file=${root_path}/$path/com_config.csv
+report=${root_path}/$path/Information.csv
+result_file=${root_path}/${path}/result.csv
+
 
 if [ ! -d "$path" ]; then
     echo "Error: Directory $path does not exist."
@@ -21,15 +24,15 @@ fi
 item_label_arr=("buzzer.csv" "bypass.csv" "caseopen.csv" "fan.csv" "gpio.csv" "lcmcom.csv" "led.csv" "nicee.csv" "psu.csv" "temp.csv" "voltage.csv" "wdt.csv")
 pass_number_arr=(1            1            1              3         1          1            1             1       3          2         2                  1)
 
-echo "---- Information ----" | tee -a $csv_file
+echo "---- Information ----" | tee -a $report
 #1. BIOS Version
 bios_ver=$(dmidecode -t 1 | grep "Version" | tr -d ' ' | cut -d':' -f2)
-echo "BIOS version : $bios_ver" | tee -a $csv_file
+echo "BIOS version : $bios_ver" | tee -a $report
 
-echo "---- DMItable type 11 ----" >> $csv_file
+echo "---- DMItable type 11 ----" >> $report
 #1-1 dmitable
 v_dmitalbe=$(dmidecode -t 11)
-echo -e "DMI information\n${v_dmitalbe}" >> $csv_file
+echo -e "DMI information\n${v_dmitalbe}" >> $report
 
 echo "================ IPMI ================" >>${ipmi_file}
 if ipmitool user list 1 >/dev/null 2>&1;then
@@ -52,12 +55,12 @@ fi
 
 #2. OS version
 os_ver=$(cat /etc/os-release | grep "VERSION" | tr -d ' ')
-echo "OS version : " | tee -a  $csv_file
-echo "$os_ver" | tee -a  $csv_file
+echo "OS version : " | tee -a  $report
+echo "$os_ver" | tee -a  $report
 
 #3. Kernel version
 kernel_ver=$(uname -r)
-echo "Kernel version : $kernel_ver" | tee -a  $csv_file
+echo "Kernel version : $kernel_ver" | tee -a  $report
 
 #4 bmc version
 if [ -e "/dev/ipmi0" ]; then
@@ -91,14 +94,14 @@ if [ -e "/dev/ipmi0" ]; then
 				printf("%s.", dec)
 			}
 		}
-}'  | tee -a $csv_file
+}'  | tee -a $report
 
 fi
 
 echo -e "\n\n---- Test mode ----" | tee -a $csv_file
 cat $mode_file | tee -a $csv_file
 
-echo -e "\n\n---- Test Result ----" | tee -a $csv_file
+echo -e "\n\n---- Test Result ----" | tee -a $result_file
 
 cd $path
 for file in *.csv; do
@@ -110,10 +113,10 @@ for file in *.csv; do
 	    	name_no_ext="${file%.csv}"
 
 	    	if [ "$pass_cnt" = "${pass_number_arr[$i]}" ]; then
-	    		printf "%-12s: PASS\n" "$name_no_ext" | tee -a  $csv_file
+	    		printf "%-12s: PASS\n" "$name_no_ext" | tee -a  $result_file
 	    		break
 	    	else
-	    		printf "%-12s: FAIL\n" "$name_no_ext" | tee -a  $csv_file
+	    		printf "%-12s: FAIL\n" "$name_no_ext" | tee -a  $result_file
 	    	fi
 	    fi
 	done
