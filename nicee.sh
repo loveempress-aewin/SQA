@@ -38,6 +38,7 @@ fi
 
 echo "-----------------" | tee -a $csv_file
 
+echo "$path/$sample" >> $csv_file
 # Get slot number.
 ./nicee > $nicee_file
 ./nicee | tee -a $csv_file
