@@ -29,10 +29,6 @@ echo "---- Information ----" | tee -a $report
 bios_ver=$(dmidecode -t 1 | grep "Version" | tr -d ' ' | cut -d':' -f2)
 echo "BIOS version : $bios_ver" | tee -a $report
 
-echo "---- DMItable type 11 ----" >> $report
-#1-1 dmitable
-v_dmitalbe=$(dmidecode -t 11)
-echo -e "DMI information\n${v_dmitalbe}" >> $report
 
 echo "================ IPMI ================" >>${ipmi_file}
 if ipmitool user list 1 >/dev/null 2>&1;then
@@ -61,6 +57,11 @@ echo "$os_ver" | tee -a  $report
 #3. Kernel version
 kernel_ver=$(uname -r)
 echo "Kernel version : $kernel_ver" | tee -a  $report
+
+echo "---- DMItable type 11 ----" >> $report
+#1-1 dmitable
+v_dmitalbe=$(dmidecode -t 11)
+echo -e "DMI information\n${v_dmitalbe}" >> $report
 
 #4 bmc version
 if [ -e "/dev/ipmi0" ]; then
