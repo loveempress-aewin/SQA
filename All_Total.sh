@@ -27,6 +27,11 @@ pass_number_arr=(1            1            1              3         1          1
 echo "---- Information ----" | tee -a $report
 #1. BIOS Version
 bios_ver=$(dmidecode -t 1 | grep "Version" | tr -d ' ' | cut -d':' -f2)
+cpu_info=$(cat /proc/cpuinfo | grep -i model\ name | awk -F ":" '{print $2}' | head -n 1)
+echo "CPU  : ${cpu_info}" | tee -a $report
+ram_info=$(lshw -short -C memory|grep MHz|awk '{$1="";$2="";print $0}')
+echo "RAM info : ${ram_info}"
+
 echo "BIOS version : $bios_ver" | tee -a $report
 
 
