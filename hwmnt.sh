@@ -1,3 +1,13 @@
+#!/bin/bash
+
+# Initialize a counter
+count=1
+
+# Loop through all arguments passed to this script
+for param in "$@"; do
+    echo "Argument ${count} : ${param}"
+    ((count++))
+done
 
 path=$1
 log_file=$2

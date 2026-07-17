@@ -1,6 +1,6 @@
 CSV_folder="csv"
 root_path=$(pwd)
-mode_file=${root_path}/$CSV_folder/mode_info.tmp
+mode_file=${root_path}/../$CSV_folder/mode_info.tmp
 
 ## Array of test items.
 declare -a ItemArray
@@ -9,10 +9,9 @@ declare -a ItemArray
 chmod 777 *.sh
 
 #### mkdir csv dir
-if [[ ! -d csv ]]; then
-    mkdir csv
+if [[ ! -d ../csv ]]; then
+    mkdir ../csv
 fi
-
 #delete tmp files
 for f in *.tmp; do
 	if [ -s "$f" ]; then
@@ -46,7 +45,7 @@ EXCLUDE="include|scbutil|slot|csv"
 
 # -maxdepth 1: 只看第一層
 # -not -name ".": 排除代表當前目錄的點號
-cd sample_code
+cd ../sample_code
 readarray -d '' sample_folders < <(find . -maxdepth 1 -type d ! -name "." | grep -vE "$EXCLUDE" | sort | tr '\n' '\0')
 
 # 測試：印出陣列內容
@@ -61,7 +60,6 @@ for dir in "${sample_folders[@]}"; do
 done
 
 ##echo "${#items_array[@]}"
-
 read choice
 
 function show_mode(){
@@ -126,7 +124,8 @@ function run_function() {
 	##echo $ver
 	echo "----------- Test ${items_array[$1]} ---------------------"
 	if [[ "${items_array[$1]}" == "fan" || "${items_array[$1]}" == "temp" || "${items_array[$1]}" == "voltage" || "${items_array[$1]}" == "psu" ]]; then
-		./../hwmnt.sh ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
+        # pwd
+		${root_path}/hwmnt.sh ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
 
     	# Check status of sensors
     	pass_cnt=$(cat "../"$CSV_folder"/${items_array["$1"]}.csv" | grep "PASS" | wc -l)
@@ -136,18 +135,18 @@ function run_function() {
 
     	## Add external tests. (fan control and power cord unplugged.)
     	if [ "${items_array[$1]}" == "fan" ];then
-    		./../fanctrl.sh ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
+    		${root_path}/fanctrl.sh ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
     	elif [ "${items_array[$1]}" == "psu" ]; then
-    		./../psuex.sh ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
+    		${root_path}/psuex.sh ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
     	fi
 
     else
     	pwd
     	## 0: no button test, 1: test button
     	if [ "${items_array[$1]}" == "lcmcom" ];then
-    		./../"${items_array[$1]}".sh ${items_array["$1"]}/$ver ../"$CSV_folder"/"${items_array[$1]}".csv "${items_array[$1]}" $lcmbtn
+    		${root_path}/"${items_array[$1]}".sh ${items_array["$1"]}/$ver ../"$CSV_folder"/"${items_array[$1]}".csv "${items_array[$1]}" $lcmbtn
     	else
-    		./../"${items_array[$1]}".sh ${items_array["$1"]}/$ver ../"$CSV_folder"/"${items_array[$1]}".csv "${items_array[$1]}"
+    		${root_path}/"${items_array[$1]}".sh ${items_array["$1"]}/$ver ../"$CSV_folder"/"${items_array[$1]}".csv "${items_array[$1]}"
     	fi
 	fi
 }
@@ -171,7 +170,7 @@ if [ "$choice" -lt "${#items_array[@]}" ]; then
 			if [ -f "../"$CSV_folder"/All_Total.csv" ]; then
 				rm ../"$CSV_folder"/All_Total.csv
 			fi
-		./../All_Total.sh ../$CSV_folder
+		${root_path}/All_Total.sh ../$CSV_folder
 	else
 		run_function $choice
 	fi

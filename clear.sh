@@ -1,4 +1,4 @@
-cd csv
-rm *
+# cd csv
+# rm *
 cd ..
 rm *.tmp

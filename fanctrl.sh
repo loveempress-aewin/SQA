@@ -1,6 +1,11 @@
 ################################################
 ####  fan ctrl test script
 ################################################
+##+ [[ fan == \f\a\n ]]
+##+ /root/big_strcu/ccauto/hwmnt.sh fan/v1.00 ../csv/fan.csv fan
+# for i in $#;do
+#     echo "${i} : $i"
+# done
 path=$1
 log_file=$2
 sample=$3
@@ -8,6 +13,7 @@ sample=$3
 root_path=$(pwd)
 csv_file=${root_path}/$log_file
 fanctrl_file=${root_path}/../fanctrl.tmp
+
 cd $path
 
 FANCRTL_RANGE=1000
