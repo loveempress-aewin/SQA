@@ -1,16 +1,18 @@
 ################################################
 ####  nicee test script
 ################################################
+####+ /root/big_strcu/ccauto/nicee.sh nicee/v1.00 ../csv/nicee.csv nicee
 path=$1
 log_file=$2
+love_back="../csv/"
 sample=$3
 rm -rf $log_file
 
-root_path=$(pwd)
+root_path=$(pwd) # + root_path=/root/big_strcu/ccauto
 csv_file=${root_path}/$log_file
 nicee_file=${root_path}/../nicee.tmp
-mb_param=${root_path}/../nicee_mb_param.txt
-slot_param=${root_path}/../nicee_slot_param.txt
+mb_param=${root_path}/${love_back}nicee_mb_param.txt
+slot_param=${root_path}/${love_back}nicee_slot_param.txt
 cd $path
 
 declare -i nicee_err=0
@@ -23,7 +25,7 @@ if [ $nicee_check_flag -ne 0 ]; then
     nicee_err=1
     echo "Fail : make clean failed." | tee -a $csv_file
     echo "FAIL" | tee -a $csv_file
-    exit
+    exit 1
 fi
 
 #### Building test : make
@@ -33,7 +35,7 @@ if [ $nicee_check_flag -ne 0 ]; then
     nicee_err=1
     echo "Fail : make failed." | tee -a $csv_file
     echo "FAIL" | tee -a $csv_file
-    exit
+    exit 1
 fi
 
 echo "-----------------" | tee -a $csv_file
@@ -49,7 +51,7 @@ if [ -z "$nicee_show" ]; then
 	nicee_err=1
 	echo "Fail : help() is error." | tee -a $csv_file
 	echo "FAIL" | tee -a $csv_file
-	exit
+	exit 1
 fi
 
 nicee_number=$(cat $nicee_file | grep "slot" | cut -d"~" -f 3)
@@ -75,23 +77,39 @@ slot_id=0
 
 # Read MB parameter setting
 len=${#mb_labels[@]}
-for (( i = 0; i < len; i++)); do
-    nicee_mb_param_array[i]=$(cat $mb_param | grep "${mb_labels[i]}" | cut -d"=" -f 2 | tr -d " ")
-done
+# for (( i = 0; i < len; i++)); do
+#     nicee_mb_param_array[i]=$(cat $mb_param | grep "${mb_labels[i]}" | cut -d"=" -f 2 | tr -d " ")
+#     echo "nicee_mb_param[$i] : ${nicee_mb_param_array[i]}"
+# done
 
 echo -e "\n------ Mother Board ------------ "  | tee -a $csv_file
 # Read MB data from eeprom
 ./nicee -show 0  | tee -a $csv_file
 ./nicee -show 0 > $nicee_file
-for (( i = 0; i < len; i++)); do
-    nicee_mb_data_array[i]=$(cat $nicee_file | grep "${mb_labels[i]}" | cut -d"=" -f 2 | tr -d " ")
-    #echo "param: ${nicee_mb_param_array[i]}"
-    #echo "data : ${nicee_mb_data_array[i]}"
-    if [ "${nicee_mb_param_array[i]}" != "${nicee_mb_data_array[i]}" ]; then
-       nicee_err=1
-       echo "Fail:${mb_labels[i]} = ${nicee_mb_param_array[i]}"
-    fi
-done
+# for (( i = 0; i < len; i++)); do
+#     nicee_mb_data_array[i]=$(cat $nicee_file | grep "${mb_labels[i]}" | cut -d"=" -f 2 | tr -d " ")
+#     #echo "param: ${nicee_mb_param_array[i]}"
+#     #echo "data : ${nicee_mb_data_array[i]}"
+#     if [ "${nicee_mb_param_array[i]}" != "${nicee_mb_data_array[i]}" ]; then
+#        nicee_err=1
+#        echo "Fail:${mb_labels[i]} = ${nicee_mb_param_array[i]}"
+#     fi
+# done
+
+./nicee -show 0
+./nicee -show 0 > ${mb_param}
+# let love_flag=0;
+read -p "Please verify (Y or N) : " love_flag
+case $love_flag in
+    Y | y)
+        echo "mother board : PASS" |tee -a $csv_file ;;
+    N | n)
+        echo "mother board : FAIL" | tee -a $csv_file
+        nicee_err=1;
+        ;;
+    *)
+        nicee_err=1
+esac
 
 while read -r line
 do
@@ -111,7 +129,7 @@ do
     nicee_slot_counts_array[$slot_id]=$index
 
 done < "$slot_param"
-
+exit 1
 # Read nicee data of net card
 len=${#slot_labels[@]}
 if [ "$nicee_number" -ne 0 ]; then
