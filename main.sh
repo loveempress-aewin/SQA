@@ -12,6 +12,8 @@ chmod 777 *.sh
 if [[ ! -d ../csv ]]; then
     mkdir ../csv
 fi
+
+bash ./start.sh
 #delete tmp files
 for f in *.tmp; do
 	if [ -s "$f" ]; then
@@ -141,7 +143,7 @@ function run_function() {
     	fi
 
     else
-    	pwd
+    	# pwd
     	## 0: no button test, 1: test button
     	if [ "${items_array[$1]}" == "lcmcom" ];then
     		${root_path}/"${items_array[$1]}".sh ${items_array["$1"]}/$ver ../"$CSV_folder"/"${items_array[$1]}".csv "${items_array[$1]}" $lcmbtn
