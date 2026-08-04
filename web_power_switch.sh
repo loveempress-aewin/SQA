@@ -42,6 +42,11 @@ function error1(){
 DEVICE_IP="192.168.199.45"
 USERNAME="admin"
 PASSWORD="1234" # Your actual plain-text password
+# let love_port=0;
+love_port=$1;
+love_control=$2;
+
+function love_send(){
 
 echo "1. Fetching login page and extracting Challenge..."
 
@@ -88,8 +93,20 @@ echo "✅ Cookie Acquired: DLILPC=\"${COOKIE}\""
 echo "3. Sending Outlet Command..."
 
 # 7. Execute Outlet Control
+# curl -s -b "DLILPC=\"${COOKIE}\"" \
+#   -H "Referer: http://${DEVICE_IP}/index.htm" \
+#   "http://${DEVICE_IP}/outlet?1=ON"
 curl -s -b "DLILPC=\"${COOKIE}\"" \
   -H "Referer: http://${DEVICE_IP}/index.htm" \
-  "http://${DEVICE_IP}/outlet?1=ON"
+  "http://${DEVICE_IP}/outlet?${love_port}=${love_control}"
 
-echo -e "\nDone!"
+echo -e "\nTHE -> [${love_port}]\nswitch:[${love_control}]\nDone!"
+}
+
+let love_count=$#;
+if (( ${love_count} == 2 ));then
+    love_send
+else
+    echo "ERROR!need 2"
+    exit 5;
+fi
