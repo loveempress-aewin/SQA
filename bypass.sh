@@ -122,7 +122,7 @@ echo "-----------------" | tee -a $csv_file
 
 all_slot=255
 all_pairs=255
-wait_secs=90A ####30 so fast==
+wait_secs=90 ####30 so fast==
 timer_secs=10
 
 # Read help
