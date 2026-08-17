@@ -8,7 +8,7 @@ rm -rf $log_file
 
 root_path=$(pwd)
 csv_file=${root_path}/$log_file
-gpio_file=${root_path}/../gpio.tmp
+gpio_file=${root_path}/../csv/gpio.tmp
 cd $path
 
 declare -i gpio_err=0

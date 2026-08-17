@@ -7,7 +7,7 @@ sample=$3
 
 root_path=$(pwd)
 csv_file=${root_path}/$log_file
-psuex_file=${root_path}/../psuex.tmp
+psuex_file=${root_path}/../csv/psuex.tmp
 cd $path
 
 declare -i psuex_err=0

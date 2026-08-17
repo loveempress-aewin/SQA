@@ -12,7 +12,7 @@ sample=$3
 
 root_path=$(pwd)
 csv_file=${root_path}/$log_file
-fanctrl_file=${root_path}/../fanctrl.tmp
+fanctrl_file=${root_path}/../csv/fanctrl.tmp
 
 cd $path
 
