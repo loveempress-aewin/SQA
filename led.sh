@@ -9,7 +9,7 @@ rm -rf $log_file
 root_path=$(pwd)
 csv_file=${root_path}/$log_file
 help_file=${root_path}/../help.tmp
-cmd_file=${root_path}/../cmd.tmp
+cmd_file=${root_path}/../csv/cmd.tmp
 cd $path
 
 declare -i led_err=0

@@ -10,7 +10,7 @@ rm -rf $log_file
 
 root_path=$(pwd) # + root_path=/root/big_strcu/ccauto
 csv_file=${root_path}/$log_file
-nicee_file=${root_path}/../nicee.tmp
+nicee_file=${root_path}/../csv/nicee.tmp
 mb_param=${root_path}/${love_back}nicee_mb_param.txt
 slot_param=${root_path}/${love_back}nicee_slot_param.txt
 cd $path
@@ -129,7 +129,7 @@ do
     nicee_slot_counts_array[$slot_id]=$index
 
 done < "$slot_param"
-exit 1
+# exit 1
 # Read nicee data of net card
 len=${#slot_labels[@]}
 if [ "$nicee_number" -ne 0 ]; then
@@ -160,4 +160,3 @@ if [ "$nicee_err" -eq 0 ]; then
 else
     echo "FAIL" | tee -a $csv_file
 fi
-

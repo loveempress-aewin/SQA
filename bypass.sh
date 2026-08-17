@@ -6,14 +6,15 @@ log_file=$2
 sample=$3
 rm -rf $log_file
 
-root_path=$(pwd)
+####+ /root/LINUX-1949/ccauto/bypass.sh bypass/v1.00 ../csv/bypass.csv bypass
+root_path=$(pwd) #### samplecode
 csv_file=${root_path}/$log_file
-bypass_file=${root_path}/../bypass.tmp
+bypass_file=${root_path}/../csv/bypass.tmp
 nicee_path="nicee"
 
 declare -i bypass_err=0
 
-cd $path
+cd $path ####  cd bypass/v1.00
 
 # Get bypass number in motherboard.
 cd ../../$nicee_path
@@ -122,7 +123,7 @@ echo "-----------------" | tee -a $csv_file
 
 all_slot=255
 all_pairs=255
-wait_secs=90A ####30 so fast==
+wait_secs=30 ####30 so fast==
 timer_secs=10
 
 # Read help
