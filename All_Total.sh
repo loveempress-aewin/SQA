@@ -37,8 +37,9 @@ echo "BIOS version : $bios_ver" | tee -a $report
 
 echo "================ IPMI ================" >>${ipmi_file}
 if ipmitool user list 1 >/dev/null 2>&1;then
-    ipmi_sdr=$(ipmitool sdr)
-    echo ${ipmi_sdr} >> ${ipmi_file}
+    ipmi_sdr=$(ipmitool sdr elist)
+    # echo -e ${ipmi_sdr} >> ${ipmi_file}
+    ipmitool sdr elist | tee -a ${ipmi_file}
 else
     echo "no ipmi" >> ${ipmi_file}
 fi
