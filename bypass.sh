@@ -21,7 +21,7 @@ cd ../../$nicee_path
 ver=$(ls | head -n 10 | tail -1)
 cd $ver
 
-echo -e "--- Test make ---" | tee -a $csv_file
+echo -e "--- Test make ---"
 #### Building test : make clean
 make clean  | tee -a $csv_file
 bypass_check_flag=$(cat $csv_file | grep "Error" | wc -l)
@@ -29,17 +29,17 @@ if [ $bypass_check_flag -ne 0 ]; then
     bypass_err=1
     echo "Fail : make clean failed." | tee -a $csv_file
     echo "FAIL" | tee -a $csv_file
-    exit
+    exit 1
 fi
 
 #### Building test : make
-make  | tee -a $csv_file
+make
 bypass_check_flag=$(cat $csv_file | grep "Error" | wc -l)
 if [ $bypass_check_flag -ne 0 ]; then
     wdt_err=1
     echo "Fail : make failed." | tee -a $csv_file
     echo "FAIL" | tee -a $csv_file
-    exit
+    exit 1
 fi
 
 echo "-----------------" | tee -a $csv_file
@@ -95,10 +95,10 @@ else
     bypass_slot2_number=$bypass_slot2_no
 fi
 
+cd ../../$path ####goto bypass
 
-cd ../../$path
-
-echo -e "--- Test make ---" | tee -a $csv_file
+# echo -e "--- Test make ---" | tee -a $csv_file
+echo -e "--- Test make ---" > $csv_file ##temp : overwright
 #### Building test : make clean
 make clean  | tee -a $csv_file
 bypass_check_flag=$(cat $csv_file | grep "Error" | wc -l)
@@ -120,6 +120,7 @@ if [ $bypass_check_flag -ne 0 ]; then
 fi
 
 echo "-----------------" | tee -a $csv_file
+echo "$path/$sample" >> $csv_file
 
 all_slot=255
 all_pairs=255
@@ -127,7 +128,7 @@ wait_secs=30 ####30 so fast==
 timer_secs=10
 
 # Read help
-./bypass  > $csv_file
+./bypass >> $csv_file
 cat $csv_file
 
 #Define in main.h
