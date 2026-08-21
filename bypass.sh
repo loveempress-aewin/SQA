@@ -1,12 +1,12 @@
 ################################################
 ####  bypass test script
 ################################################
+####+ /root/LINUX-1949/ccauto/bypass.sh bypass/v1.00 ../csv/bypass.csv bypass
 path=$1
 log_file=$2
 sample=$3
 rm -rf $log_file
 
-####+ /root/LINUX-1949/ccauto/bypass.sh bypass/v1.00 ../csv/bypass.csv bypass
 root_path=$(pwd) #### samplecode
 csv_file=${root_path}/$log_file
 bypass_file=${root_path}/../csv/bypass.tmp
@@ -52,7 +52,7 @@ if [ -z $bypass_mb_no ]; then
 	bypass_err=1
 	echo "Bypass number of mother board is empty."  | tee -a $csv_file
 	echo "FAIL" | tee -a $csv_file
-	exit
+	exit 1
 fi
 
 if [ "$bypass_mb_no" = "No" ]; then
