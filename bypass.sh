@@ -9,7 +9,7 @@ rm -rf $log_file
 
 root_path=$(pwd) #### samplecode
 csv_file=${root_path}/$log_file
-bypass_file=${root_path}/../csv/bypass.tmp
+bypass_tem=${root_path}/../csv/bypass.tmp
 nicee_path="nicee"
 
 declare -i bypass_err=0
@@ -44,8 +44,8 @@ fi
 
 echo "-----------------" | tee -a $csv_file
 
-./nicee -show 0 > $bypass_file
-bypass_mb_no=$(cat $bypass_file |  grep "bypass" | cut -d"=" -f 2 |  cut -d" " -f 2)
+./nicee -show 0 > $bypass_tem
+bypass_mb_no=$(cat $bypass_tem |  grep "bypass" | cut -d"=" -f 2 |  cut -d" " -f 2)
 echo "Pair number of Mother board : $bypass_mb_no"
 
 if [ -z $bypass_mb_no ]; then
@@ -61,8 +61,8 @@ else
     bypass_mb_number=$bypass_mb_no
 fi
 
-./nicee -show 1 > $bypass_file
-bypass_slot1_no=$(cat $bypass_file |  grep "bypass" | cut -d"=" -f 2 |  cut -d" " -f 2)
+./nicee -show 1 > $bypass_tem
+bypass_slot1_no=$(cat $bypass_tem |  grep "bypass" | cut -d"=" -f 2 |  cut -d" " -f 2)
 echo "Pair number of slot#1 : $bypass_slot1_no"
 
 if [ -z $bypass_slot1_no ]; then
@@ -78,8 +78,8 @@ else
     bypass_slot1_number=$bypass_slot1_no
 fi
 
-./nicee -show 2 > $bypass_file
-bypass_slot2_no=$(cat $bypass_file |  grep "bypass" | cut -d"=" -f 2 |  cut -d" " -f 2)
+./nicee -show 2 > $bypass_tem
+bypass_slot2_no=$(cat $bypass_tem |  grep "bypass" | cut -d"=" -f 2 |  cut -d" " -f 2)
 echo "Pair number of slot#2 : $bypass_slot2_no"
 
 if [ -z $bypass_slot2_no ]; then
@@ -153,19 +153,19 @@ function check_bypass() {
     ./bypass -$cmd $slot $pair -$update  | tee -a $csv_file
     if [ "$update" = "u" ]; then
         ./bypass -rn $slot $pair  | tee -a $csv_file
-        ./bypass -rn $slot $pair > $bypass_file
+        ./bypass -rn $slot $pair > $bypass_tem
     else
         ./bypass -r $slot $pair  | tee -a $csv_file
-        ./bypass -r $slot $pair > $bypass_file
+        ./bypass -r $slot $pair > $bypass_tem
     fi
 
     ## Check status
     if [ "$cmd" = "ee" ]; then
-         status=$(cat $bypass_file | grep "$bypass_ee_str" | wc -l)
+         status=$(cat $bypass_tem | grep "$bypass_ee_str" | wc -l)
     elif [ "$cmd" = "dd" ]; then
-        status=$(cat $bypass_file | grep "$bypass_dd_str" | wc -l)
+        status=$(cat $bypass_tem | grep "$bypass_dd_str" | wc -l)
     elif [ "$cmd" = "ed" ]; then
-        status=$(cat $bypass_file | grep "$bypass_ed_str" | wc -l)
+        status=$(cat $bypass_tem | grep "$bypass_ed_str" | wc -l)
     else
         echo "command error: $cmd"  | tee -a $csv_file
     fi
@@ -173,13 +173,13 @@ function check_bypass() {
     ## Check slot label
     if [ "$slot" -ne "$all_slot" ]; then
         if [ "$slot" -eq 0 ]; then
-            status=$(cat $bypass_file | grep "Motherboard" | wc -l)
+            status=$(cat $bypass_tem | grep "Motherboard" | wc -l)
             if [ "$status" -eq 0 ];then
                 echo "motherboard label failed." | tee -a $csv_file
                 bypass_err=1
             fi
         else
-            status=$(cat $bypass_file | grep "Slot #$slot" | wc -l)
+            status=$(cat $bypass_tem | grep "Slot #$slot" | wc -l)
             if [ "$status" -eq 0 ];then
                 echo "slot label failed." | tee -a $csv_file
                 bypass_err=1
@@ -189,7 +189,7 @@ function check_bypass() {
 
     ## Check pair number
     if [ "$pair" -ne "$all_pairs" ]; then
-        status=$(cat $bypass_file | grep "pair #$pair" | wc -l)
+        status=$(cat $bypass_tem | grep "pair #$pair" | wc -l)
         if [ "$status" -eq 0 ]; then
              echo "pair number label failed." | tee -a $csv_file
              bypass_err=1
@@ -198,13 +198,13 @@ function check_bypass() {
 
    ## Check current or update
     if [ "$update" = "u" ]; then
-        status=$(cat $bypass_file | grep "default" | wc -l)
+        status=$(cat $bypass_tem | grep "default" | wc -l)
         if [ "$status" -eq 0 ];then
             echo "Default settingt label failed." | tee -a $csv_file
             bypass_err=1
         fi
     else
-        status=$(cat $bypass_file | grep "current" | wc -l)
+        status=$(cat $bypass_tem | grep "current" | wc -l)
         if [ "$status" -eq 0 ];then
             echo "Current setting label failed." | tee -a $csv_file
             bypass_err=1
@@ -301,14 +301,14 @@ function bypass_save_default_status() {
     code_pair=$2
 
     # Check ee
-    match=$(cat $bypass_file | grep "$bypass_ee_str" | wc -l)
+    match=$(cat $bypass_tem | grep "$bypass_ee_str" | wc -l)
     if [ "$match" -gt 0 ]; then
         bypass_default_arr["$code_slot,$code_pair"]=${bypass_all_codes[1]}
         return
     fi
 
     # Check dd
-    match=$(cat $bypass_file  | grep "$bypass_dd_str" | wc -l)
+    match=$(cat $bypass_tem  | grep "$bypass_dd_str" | wc -l)
     if [ "$match" -gt 0 ]; then
         bypass_default_arr["$code_slot,$code_pair"]=${bypass_all_codes[2]}
         #echo "slot$code_slot, pair$code_pair : ${bypass_all_codes[2]}"
@@ -317,7 +317,7 @@ function bypass_save_default_status() {
     fi
 
     # Check ed
-    match=$(cat $bypass_file  | grep "$bypass_ed_str" | wc -l)
+    match=$(cat $bypass_tem  | grep "$bypass_ed_str" | wc -l)
     if [ "$match" -gt 0 ]; then
         bypass_default_arr["$code_slot,$code_pair"]=${bypass_all_codes[3]}
         ##echo "slot$code_slot, pair$code_pair : ${bypass_all_codes[3]}"
@@ -340,7 +340,7 @@ function bypass_default_module() {
     fi
     for (( i = 1; i <= $mod_number; i++)); do
         ./bypass -rn  $mod_slot $i | tee -a $csv_file
-        ./bypass -rn  $mod_slot $i > $bypass_file
+        ./bypass -rn  $mod_slot $i > $bypass_tem
 			bypass_save_default_status $mod_slot $i
     done
 
