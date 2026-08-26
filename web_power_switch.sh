@@ -108,5 +108,10 @@ if (( ${love_count} == 2 ));then
     love_send
 else
     echo "ERROR!need 2"
+    help_message="
+    port = 1~8 || a\n\
+    control=ON OFF\n
+    "
+    echo -e ${help_message}
     exit 5;
 fi
