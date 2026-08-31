@@ -39,7 +39,12 @@ function error1(){
     echo "$RESPONSE"
 }
 
-DEVICE_IP="192.168.199.45"
+# Prefer IP from config.cfg (POWER_SWITCH_IP); fall back to the lab default.
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "${_SCRIPT_DIR}/config.cfg" ]; then
+    source "${_SCRIPT_DIR}/config.cfg"
+fi
+DEVICE_IP="${POWER_SWITCH_IP:-192.168.199.45}"
 USERNAME="admin"
 PASSWORD="1234" # Your actual plain-text password
 # let love_port=0;
