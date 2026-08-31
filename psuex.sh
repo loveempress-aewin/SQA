@@ -6,9 +6,26 @@ log_file=$2
 sample=$3
 
 root_path=$(pwd)
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 csv_file=${root_path}/$log_file
 psuex_file=${root_path}/../csv/psuex.tmp
 cd $path
+
+#### Load config.cfg, then validate USE_POWER_SWITCH.
+if [ -f "${script_dir}/config.cfg" ]; then
+    source "${script_dir}/config.cfg"
+fi
+source "${script_dir}/power_switch_validate.sh"
+
+function F_power_switch(){
+    local love_port="$1"
+    local love_control="$2"
+    if [ "$CURRENT_SETTING" != "true" ]; then
+        echo "[STATUS] Skip web_power_switch.sh (USE_POWER_SWITCH is not true)."
+        return 0
+    fi
+    "${script_dir}/web_power_switch.sh" "$love_port" "$love_control"
+}
 
 declare -i psuex_err=0
 
@@ -111,12 +128,17 @@ function check_power_status() {
 }
 
 ### Test unplugged status of psu0
-echo "Please unplug the first power cord and key \"yes\"."
-check_power_status
-psu_check_flag=$?
+if [ "$CURRENT_SETTING" = "true" ]; then
+    echo "[STATUS] Unplug PSU0 via web_power_switch.sh (port ${power_1} OFF)."
+    F_power_switch ${power_1} OFF && sleep 8
+    psu_check_flag=0
+else
+    echo "Please unplug the first power cord and key \"yes\"."
+    check_power_status
+    psu_check_flag=$?
+fi
 
 if [  "$psu_check_flag" -eq 0 ]; then
-    ./web_power_switch.sh ${power_1} OFF &&sleep 8;
      echo "./psu -r" | tee -a $csv_file
     ./psu -r | tee -a  $csv_file
     ./psu -r > $psuex_file
@@ -136,13 +158,18 @@ fi
 echo "Please plug the first power cord."
 
 ### Test unplugged status of psu1
-echo "Please unplug the second power cord and key \"yes\"."
-check_power_status
-psu_check_flag=$?
+if [ "$CURRENT_SETTING" = "true" ]; then
+    echo "[STATUS] Unplug PSU1 via web_power_switch.sh (port ${power_1} ON, port ${power_2} OFF)."
+    F_power_switch ${power_1} ON && sleep 8
+    F_power_switch ${power_2} OFF && sleep 8
+    psu_check_flag=0
+else
+    echo "Please unplug the second power cord and key \"yes\"."
+    check_power_status
+    psu_check_flag=$?
+fi
 
 if [  "$psu_check_flag" -eq 0 ]; then
-    ./web_power_switch.sh ${power_1} ON && sleep 8;
-    ./web_power_switch.sh ${power_2} OFF && sleep 8;
      echo "./psu -r" | tee -a $csv_file
     ./psu -r | tee -a  $csv_file
     ./psu -r > $psuex_file
@@ -159,7 +186,7 @@ else
     exit 1
 fi
 
-./web_power_switch.sh ${power_2} ON;
+F_power_switch ${power_2} ON
 #### Test result
 if [ "$psuex_err" -eq 0 ]; then
     echo "PSUEx PASS" | tee -a $csv_file
