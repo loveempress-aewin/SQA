@@ -1,29 +1,30 @@
+import os
+from datetime import datetime
 import requests
 from requests.auth import HTTPDigestAuth
-from datetime import datetime  # 引入時間模組
-import os
 
-# ================= 設定區 =================
+# ================= Configuration =================
 CAMERA_IP = "192.168.199.55"
 USERNAME = "admin"
 PASSWORD = "dh123456"
-OUTPUT_DIR = "pic"  # Target directory under current path
-# =========================================
+# Save to the pic/ directory located in the parent directory (../pic)
+OUTPUT_DIR = os.path.join("..", "pic")
+# =================================================
 
-# 0. 確保 pic/ 目錄存在，若不存在則自動建立
+# 0. Create ../pic directory if it doesn't exist
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# 1. 取得當前時間，並格式化為字串（格式：年分月日_時分秒，例如 20260714_091530）
+# 1. Get current timestamp and format it as a string (YYYYMMDD_HHMMSS)
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-# 2. 將目錄與檔名組合在一起 (pic/snapshot_20260714_091530.jpg)
+# 2. Construct filename and full save path (e.g., ../pic/snapshot_20260901_145000.jpg)
 filename = f"snapshot_{current_time}.jpg"
 SAVE_PATH = os.path.join(OUTPUT_DIR, filename)
 
-# 大華抓取當前畫面的 Snapshot API 網址
+# Dahua Snapshot API URL
 url = f"http://{CAMERA_IP}/cgi-bin/snapshot.cgi?channel=1"
 
-print(f"正在連線至攝影機 {CAMERA_IP} 請求拍照...")
+print(f"Connecting to camera at {CAMERA_IP} to capture snapshot...")
 
 try:
     response = requests.get(
@@ -35,9 +36,9 @@ try:
     if response.status_code == 200:
         with open(SAVE_PATH, "wb") as f:
             f.write(response.content)
-        print(f"成功！照片已儲存至：{os.path.abspath(SAVE_PATH)}")
+        print(f"Success! Image saved to: {os.path.abspath(SAVE_PATH)}")
     else:
-        print(f"失敗，錯誤代碼: {response.status_code}")
+        print(f"Failed to capture snapshot. Status code: {response.status_code}")
 
 except requests.exceptions.RequestException as e:
-    print(f"連線發生異常: {e}")
+    print(f"Connection exception occurred: {e}")
