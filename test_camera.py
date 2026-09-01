@@ -7,13 +7,18 @@ import os
 CAMERA_IP = "192.168.199.55"
 USERNAME = "admin"
 PASSWORD = "dh123456"
+OUTPUT_DIR = "pic"  # Target directory under current path
 # =========================================
+
+# 0. 確保 pic/ 目錄存在，若不存在則自動建立
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # 1. 取得當前時間，並格式化為字串（格式：年分月日_時分秒，例如 20260714_091530）
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-# 2. 把時間組合進檔名裡，這樣每次執行檔名都絕對不同
-SAVE_PATH = f"snapshot_{current_time}.jpg"
+# 2. 將目錄與檔名組合在一起 (pic/snapshot_20260714_091530.jpg)
+filename = f"snapshot_{current_time}.jpg"
+SAVE_PATH = os.path.join(OUTPUT_DIR, filename)
 
 # 大華抓取當前畫面的 Snapshot API 網址
 url = f"http://{CAMERA_IP}/cgi-bin/snapshot.cgi?channel=1"
