@@ -7,10 +7,17 @@ sample=$3
 rm -rf $log_file
 
 root_path=$(pwd)
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 csv_file=${root_path}/$log_file
 help_file=${root_path}/../help.tmp
 cmd_file=${root_path}/../csv/cmd.tmp
 cd $path
+
+#### Load config.cfg, then validate USE_CAMERA.
+if [ -f "${script_dir}/config.cfg" ]; then
+    source "${script_dir}/config.cfg"
+fi
+source "${script_dir}/camera_validate.sh"
 
 declare -i led_err=0
 
@@ -74,6 +81,10 @@ do
     ./$line
     check_led
     led_check_flag=$?
+    if [ "$CAMERA_SETTING" = "true" ]; then
+        echo "[STATUS] Taking photo via test_camera.py."
+        python3 "${script_dir}/test_camera.py"
+    fi
 
     #echo $led_check_flag
     if [ "$led_check_flag" -eq 1 ]; then
@@ -81,6 +92,10 @@ do
         echo "Failed" | tee -a $csv_file
     else
         echo "Pass" | tee -a $csv_file
+        # if [ "$CAMERA_SETTING" = "true" ]; then
+        #     echo "[STATUS] Taking photo via test_camera.py."
+        #     python3 "${script_dir}/test_camera.py"
+        # fi
     fi
 done < "$cmd_file"
 
