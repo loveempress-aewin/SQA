@@ -1,3 +1,4 @@
+#!/bin/bash
 CSV_folder="csv"
 root_path=$(pwd)
 mode_file=${root_path}/../$CSV_folder/mode_info.tmp
@@ -131,25 +132,27 @@ function run_function() {
 
     	# Check status of sensors
     	pass_cnt=$(cat "../"$CSV_folder"/${items_array["$1"]}.csv" | grep "PASS" | wc -l)
-    	if [ $pass_cnt -eq 0 ]; then
-    		return
-    	fi
 
     	## Add external tests. (fan control and power cord unplugged.)
-    	if [ "${items_array[$1]}" == "fan" ];then
-    		${root_path}/fanctrl.sh ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
-    	elif [ "${items_array[$1]}" == "psu" ]; then
-    		${root_path}/psuex.sh ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
+    	if [[ "${items_array[$1]}" = "fan" ]]; then
+    		bash "${root_path}/fanctrl.sh" ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
+    	elif [[ "${items_array[$1]}" = "psu" ]]; then
+    		bash "${root_path}/psuex.sh" ${items_array["$1"]}/$ver ../"$CSV_folder"/${items_array["$1"]}.csv ${items_array["$1"]}
+    	fi
+        if [ "${pass_cnt}" -eq 0 ]; then
+    		echo "Skip extra test for ${items_array[$1]}: no PASS in ../${CSV_folder}/${items_array[$1]}.csv"
+    		return
     	fi
 
     else
     	# pwd
     	## 0: no button test, 1: test button
-    	if [ "${items_array[$1]}" == "lcmcom" ];then
+    	if [[ "${items_array[$1]}" = "lcmcom" ]]; then
     		${root_path}/"${items_array[$1]}".sh ${items_array["$1"]}/$ver ../"$CSV_folder"/"${items_array[$1]}".csv "${items_array[$1]}" $lcmbtn
     	else
     		${root_path}/"${items_array[$1]}".sh ${items_array["$1"]}/$ver ../"$CSV_folder"/"${items_array[$1]}".csv "${items_array[$1]}"
     	fi
+
 	fi
 }
 
