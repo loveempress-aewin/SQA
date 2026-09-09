@@ -7,8 +7,9 @@ from requests.auth import HTTPDigestAuth
 CAMERA_IP = "192.168.199.55"
 USERNAME = "admin"
 PASSWORD = "dh123456"
-# Save to the pic/ directory located in the parent directory (../pic)
-OUTPUT_DIR = os.path.join("..", "pic")
+# Save to ../pic relative to this script (not CWD; led.sh cds into the sample dir)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "pic"))
 # =================================================
 
 # 0. Create ../pic directory if it doesn't exist
