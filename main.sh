@@ -21,6 +21,9 @@ for f in *.tmp; do
  	fi
 done
 
+#### amd
+bash ./amd.sh
+
 #Set LCM button test
 lcmbtn=0    #1:button test, 0: no button
 
