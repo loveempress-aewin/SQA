@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import datetime
 import requests
 from requests.auth import HTTPDigestAuth
@@ -15,11 +16,18 @@ OUTPUT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "pic"))
 # 0. Create ../pic directory if it doesn't exist
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+# Optional label from Bash (e.g. -1e, -1d) for the snapshot filename.
+raw_label = sys.argv[1] if len(sys.argv) > 1 else ""
+label = "".join(c if c.isalnum() or c in "-_." else "_" for c in raw_label).strip("._")
+
 # 1. Get current timestamp and format it as a string (YYYYMMDD_HHMMSS)
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-# 2. Construct filename and full save path (e.g., ../pic/snapshot_20260901_145000.jpg)
-filename = f"snapshot_{current_time}.jpg"
+# 2. Construct filename and full save path (e.g., ../pic/snapshot_-1e_20260901_145000.jpg)
+if label:
+    filename = f"snapshot_{label}_{current_time}.jpg"
+else:
+    filename = f"snapshot_{current_time}.jpg"
 SAVE_PATH = os.path.join(OUTPUT_DIR, filename)
 
 # Dahua Snapshot API URL
