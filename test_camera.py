@@ -1,0 +1,62 @@
+import os
+import sys
+from datetime import datetime
+import requests
+from requests.auth import HTTPDigestAuth
+
+# ================= Configuration =================
+CAMERA_IP = "192.168.199.55"
+USERNAME = "admin"
+PASSWORD = "dh123456"
+# Save to ../pic relative to this script (not CWD; led.sh cds into the sample dir)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "pic"))
+# =================================================
+
+# 0. Create ../pic directory if it doesn't exist
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# Optional label from Bash (e.g. -1e, -1d) for the snapshot filename.
+raw_label = sys.argv[1] if len(sys.argv) > 1 else ""
+label = "".join(c if c.isalnum() or c in "-_." else "_" for c in raw_label).strip("._")
+# Optional log path from Bash (led.csv). "a" is the Python equivalent of >>.
+csv_path = sys.argv[2] if len(sys.argv) > 2 else ""
+
+
+def log_message(msg):
+    print(msg)
+    if csv_path:
+        with open(csv_path, "a") as f:
+            f.write(msg + "\n")
+
+# 1. Get current timestamp and format it as a string (YYYYMMDD_HHMMSS)
+current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+# 2. Construct filename and full save path (e.g., ../pic/snapshot_-1e_20260901_145000.jpg)
+if label:
+    filename = f"snapshot_{label}_{current_time}.jpg"
+else:
+    filename = f"snapshot_{current_time}.jpg"
+SAVE_PATH = os.path.join(OUTPUT_DIR, filename)
+
+# Dahua Snapshot API URL
+url = f"http://{CAMERA_IP}/cgi-bin/snapshot.cgi?channel=1"
+
+print(f"Connecting to camera at {CAMERA_IP} to capture snapshot...")
+
+try:
+    response = requests.get(
+        url,
+        auth=HTTPDigestAuth(USERNAME, PASSWORD),
+        timeout=5
+    )
+
+    if response.status_code == 200:
+        with open(SAVE_PATH, "wb") as f:
+            f.write(response.content)
+        log_message(f"Success! Image saved to: {os.path.abspath(SAVE_PATH)}")
+    else:
+        log_message(f"Failed to capture snapshot. Status code: {response.status_code}")
+
+except requests.exceptions.RequestException as e:
+    log_message(f"Connection exception occurred: {e}")
