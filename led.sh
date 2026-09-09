@@ -81,7 +81,7 @@ do
     ./$line
     check_led
     led_check_flag=$?
-    python3 "${script_dir}/test_camera.py" "$line" </dev/null
+    python3 "${script_dir}/test_camera.py" "$line" "$csv_file" </dev/null
     if [ "$CAMERA_SETTING" = "true" ]; then
         echo "[STATUS] Taking photo via test_camera.py."
         # python3 "${script_dir}/test_camera.py"

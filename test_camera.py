@@ -19,6 +19,15 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # Optional label from Bash (e.g. -1e, -1d) for the snapshot filename.
 raw_label = sys.argv[1] if len(sys.argv) > 1 else ""
 label = "".join(c if c.isalnum() or c in "-_." else "_" for c in raw_label).strip("._")
+# Optional log path from Bash (led.csv). "a" is the Python equivalent of >>.
+csv_path = sys.argv[2] if len(sys.argv) > 2 else ""
+
+
+def log_message(msg):
+    print(msg)
+    if csv_path:
+        with open(csv_path, "a") as f:
+            f.write(msg + "\n")
 
 # 1. Get current timestamp and format it as a string (YYYYMMDD_HHMMSS)
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -45,9 +54,9 @@ try:
     if response.status_code == 200:
         with open(SAVE_PATH, "wb") as f:
             f.write(response.content)
-        print(f"Success! Image saved to: {os.path.abspath(SAVE_PATH)}")
+        log_message(f"Success! Image saved to: {os.path.abspath(SAVE_PATH)}")
     else:
-        print(f"Failed to capture snapshot. Status code: {response.status_code}")
+        log_message(f"Failed to capture snapshot. Status code: {response.status_code}")
 
 except requests.exceptions.RequestException as e:
-    print(f"Connection exception occurred: {e}")
+    log_message(f"Connection exception occurred: {e}")
