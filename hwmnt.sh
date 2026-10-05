@@ -69,12 +69,12 @@ BMC_voltage_intel_cpu1_label=("CPU0 VCORE" "CPU0 VCCIO" "CPU0 VDDQ ABCD" "CPU0 V
 BMC_voltage_intel_cpu2_label=("CPU0 VCORE" "CPU0 VCCIO" "CPU0 VDDQ ABCD" "CPU0 VDDQ EFGH"  "CPU1 VCORE" "CPU1 VCCIO" "CPU1 VDDQ JKLM" "CPU1 VDDQ NPRT" "+12V" "+5V" "+3.3V" "VBAT" "PCH 1.8V" "PCH PVNN" "PCH 1.05V" "BMC 1.15V")
 BMC_voltage_amd_cpu1_label=("VDDCR CPU P0" "VDDCR SOC P0" "VDDQ ABCD P0" "VDDQ EFGH P0" "+12V" "+5V" "+3.3V" "VBAT")
 BMC_voltage_amd_cpu2_label=("VDDCR CPU P0" "VDDCR SOC P0" "VDDQ ABCD P0" "VDDQ EFGH P0" "VDDCR CPU P1" "VDDCR SOC P1" "VDDQ ABCD P1" "VDDQ EFGH P1" "+12V" "+5V" "+3.3V" "VBAT")
-# fan
+#### fan label
 SIO_fan_cpu1_label=("CPU0 Fan" "SYSFAN1 1" "SYSFAN2 1" "SYSFAN3 1" "SYSFAN4 1")
 SIO_fan_cpu2_label=("CPU0 Fan" "CPU1 Fan" "SYSFAN1 1" "SYSFAN2 1" "SYSFAN3 1" "SYSFAN4 1")
 BMC_fan_cpu1_label=("CPU0 Fan" "SYSFAN1 1" "SYSFAN2 1" "SYSFAN3 1" "SYSFAN4 1")
 BMC_fan_cpu2_label=("CPU0 Fan" "CPU1 Fan" "SYSFAN1 1" "SYSFAN2 1" "SYSFAN3 1" "SYSFAN4 1")
-# fan
+#### fan
 SIO_psu_cpu1_label=("PSU0 Status" "PSU0 Vin" "PSU0 +12V" "PSU0 Fan" "PSU0 Temp." "PSU1 Status" "PSU1 Vin" "PSU1 +12V" "PSU1 Fan" "PSU1 Temp.")
 SIO_psu_cpu2_label=("PSU0 Status" "PSU0 Vin" "PSU0 +12V" "PSU0 Fan" "PSU0 Temp." "PSU1 Status" "PSU1 Vin" "PSU1 +12V" "PSU1 Fan" "PSU1 Temp.")
 BMC_psu_cpu1_label=("PSU0 Status" "PSU0 Vin" "PSU0 +12V" "PSU0 Fan" "PSU0 Temp." "PSU1 Status" "PSU1 Vin" "PSU1 +12V" "PSU1 Fan" "PSU1 Temp.")

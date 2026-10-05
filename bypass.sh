@@ -215,7 +215,7 @@ function check_bypass() {
 function bypass_current_module() {
     mod_slot=$1
     mod_number=$2
-    #Set all bypass to ed
+    #Set all bypass to dd
     if [ "$mod_slot" -eq 0 ]; then
         echo -e "\n------ Disable all bypass(dd) on mother board  ------------ "  | tee -a $csv_file
     else
