@@ -23,3 +23,26 @@ version 1.0
   x = 1
 [root@localhost v1.00]# ./nicee|g slot|cut -d"~" -f 3
 ```
+
+# struct
+```bash ================================================================
+.
+├── sample_code
+└── sio_drv
+```
+這是測試的架構 基礎會有這兩包 `sample code`
+
+```bash ================================================================
+
+.
+├── ccauto  ####<---- 這就是 自動化測試的項目
+├── sample_code
+└── sio_drv
+
+[root@localhost L_1949]# loveme --graph aewin 1314
+.
+├── ccauto
+├── csv     #### <---- 這是自動化產生的報告 LOG
+├── sample_code
+└── sio_drv
+```
