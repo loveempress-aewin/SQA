@@ -54,15 +54,46 @@ if [ -z "$nicee_show" ]; then
 	exit 1
 fi
 
-nicee_number=$(cat $nicee_file | grep "slot" | cut -d"~" -f 3)
-if [ -z $nicee_number ]; then
-    nicee_number=0
-fi
+# nicee_number=$(cat $nicee_file | grep "slot" | cut -d"~" -f 3)
+# if [ -z $nicee_number ]; then
+#     nicee_number=0
+# fi
 
+# nicee_number=$(cat $nicee_file | grep "bypass circuits"| awk -F"=" '{print $2+0}')
+nicee_number=${NICEE_NUM_SLOT}
 # Reset slot number
 ##nicee_number=2
 
+echo "Please verify that your SLOT is this number. If it is not, please select N and reconfigure the settings file."
 echo "slot number : $nicee_number"
+function love_input_my(){
+    echo -n "Continue? [Y/n] (auto-yes in 5s): "
+    if read -t 5 -r answer; then
+        # user typed something
+        answer="${answer:-Y}"          # if user just pressed enter → default Y
+    else
+        # timeout hit
+        echo ""                        # newline after the prompt
+        answer="Y"
+        echo "No input detected, defaulting to YES"
+    fi
+
+case "${answer^^}" in              # ^^ converts to uppercase
+    Y|YES)
+        echo "Proceeding..."
+        ;;
+    N|NO)
+        echo "Aborted."
+        exit 0
+        ;;
+    *)
+        echo "Invalid input, defaulting to YES"
+        love_input_my
+        ;;
+esac
+}
+love_input_my
+
 
 # All Labels array
 mb_labels=("Module Number" "Number of LAN ports" "Number of LAN2 ports" "Number of LAN3 ports" "H/W version" "Number of bypass" "Number of SKU")
