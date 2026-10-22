@@ -2,17 +2,27 @@
 ####  nicee test script
 ################################################
 ####+ /root/big_strcu/ccauto/nicee.sh nicee/v1.00 ../csv/nicee.csv nicee
+. $(pwd)/../ccauto/config.cfg
+if(( $# < 3 ));then exit 33;fi
 path=$1
 log_file=$2
 love_back="../csv/"
 sample=$3
 rm -rf $log_file
 
-root_path=$(pwd) # + root_path=/root/big_strcu/ccauto
+root_path=$(pwd) # + root_path=/root/big_strcu/samplecode
+# . ${root_path}/../ccauto/config.cfg
 csv_file=${root_path}/$log_file
 nicee_file=${root_path}/../csv/nicee.tmp
 mb_param=${root_path}/${love_back}nicee_mb_param.txt
-slot_param=${root_path}/${love_back}nicee_slot_param.txt
+# slot_param=${root_path/${love_back}/nicee_slot_param.txt
+slot_param=${root_path}/../ccauto/nicee_slot_param.txt
+if [[ -z ${slot_param} ]];then
+    echo 'slot_param is empty';exit 33;
+else
+    echo "slot_param : ${slot_param}"|xxd
+    echo "slot_param : ${slot_param}"|cat -A
+fi
 cd $path
 
 declare -i nicee_err=0
@@ -61,6 +71,9 @@ fi
 
 # nicee_number=$(cat $nicee_file | grep "bypass circuits"| awk -F"=" '{print $2+0}')
 nicee_number=${NICEE_NUM_SLOT}
+# if (( ${nicee_num_slot} ))
+ERROR_mesage="================\nERROR : U need add [NICEE_NUM_SLOT]\n================\n"
+if [[ ! "${nicee_number}" =~ ^[0-9]+$ ]];then echo -e "${ERROR_mesage}"; exit 99;fi
 # Reset slot number
 ##nicee_number=2
 
@@ -104,7 +117,7 @@ declare -a nicee_mb_param_array
 declare -a nicee_slot_data_array
 declare -A nicee_slot_param_array
 declare -A nicee_slot_counts_array
-slot_id=0
+declare -i slot_id=0
 
 # Read MB parameter setting
 len=${#mb_labels[@]}
@@ -144,21 +157,18 @@ esac
 
 while read -r line
 do
-    #printf '%s\n' "$line"
+    printf '%s\n' "while -> line:$line" ####dev-mode
     # skip space line.
     #[[ -z "$line" ]] && continue
-
     slot_id=$((slot_id + 1))
     read -a elements <<< "$line"
-
     index=0
     for item in "${elements[@]}"; do
+        echo "nicee_slot_param_array[$slot_id,$index]"
         nicee_slot_param_array["$slot_id,$index"]=$item
         index=$((index + 1))
     done
-
     nicee_slot_counts_array[$slot_id]=$index
-
 done < "$slot_param"
 # exit 1
 # Read nicee data of net card
@@ -174,11 +184,11 @@ if [ "$nicee_number" -ne 0 ]; then
         else
             for (( j = 0; j < ${nicee_slot_counts_array[$i]}; j++)); do
                 nicee_slot_data_array[j]=$(cat $nicee_file | grep "${slot_labels[j]}" |  cut -d"=" -f 2 | tr -d ' ')
-                ##echo ${nicee_slot_param_array["$i,$j"]}
-                ##echo ${nicee_slot_data_array[j]}
+                # echo ${nicee_slot_param_array["$i,$j"]} ####dev mode
+                # echo ${nicee_slot_data_array[j]}        ####dev mode
                 if [ "${nicee_slot_param_array["$i,$j"]}" != "${nicee_slot_data_array[j]}" ]; then
                    nicee_err=1
-                   echo "Fail:${slot_labels[j]} = ${nicee_slot_param_array["$i,$j"]}"
+                   echo "Fail:${slot_labels[j]} = ${nicee_slot_param_array["$i,$j"]}"|tee -a $csv_file
                 fi
             done
         fi
