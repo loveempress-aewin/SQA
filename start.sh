@@ -12,5 +12,5 @@ if [[ ! -d ../csv ]]; then
 fi
 
 if [[ ! -f ../csv/nicee_slot_param.txt ]];then
-    echo "" > ../csv/nicee_slot_param.txt
+    echo -e "" > ../csv/nicee_slot_param.txt
 fi
