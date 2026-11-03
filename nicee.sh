@@ -157,15 +157,17 @@ esac
 
 while read -r line
 do
-    printf '%s\n' "while -> line:$line" ####dev-mode
+    printf 'while -> line: %s\n' "$line" ####dev-mode
     # skip space line.
     #[[ -z "$line" ]] && continue
     slot_id=$((slot_id + 1))
-    read -a elements <<< "$line"
+    line="${line%,}"          # strip trailing comma
+    line="${line//$'\r'/}"    # strip carriage return (CRLF safety)
+    IFS=',' read -a elements <<< "$line"
     index=0
     for item in "${elements[@]}"; do
-        echo "nicee_slot_param_array[$slot_id,$index]"
         nicee_slot_param_array["$slot_id,$index"]=$item
+        echo "nicee_slot_param_array[$slot_id,$index] : ${nicee_slot_param_array["$slot_id,$index"]}" ####devmode
         index=$((index + 1))
     done
     nicee_slot_counts_array[$slot_id]=$index
