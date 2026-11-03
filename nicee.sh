@@ -186,11 +186,13 @@ if [ "$nicee_number" -ne 0 ]; then
         else
             for (( j = 0; j < ${nicee_slot_counts_array[$i]}; j++)); do
                 nicee_slot_data_array[j]=$(cat $nicee_file | grep "${slot_labels[j]}" |  cut -d"=" -f 2 | tr -d ' ')
+                #### tr -d '' -> [4 bypass] -> [4bypass]
                 # echo ${nicee_slot_param_array["$i,$j"]} ####dev mode
-                # echo ${nicee_slot_data_array[j]}        ####dev mode
+                # echo "!2:${nicee_slot_data_array[$j]}"        ####dev mode
                 if [ "${nicee_slot_param_array["$i,$j"]}" != "${nicee_slot_data_array[j]}" ]; then
                    nicee_err=1
                    echo "Fail:${slot_labels[j]} = ${nicee_slot_param_array["$i,$j"]}"|tee -a $csv_file
+                   # printf "Fail : O:[%s] X:[%s]\n" "${nicee_slot_param_array[$i,$j]}" "${nicee_slot_data_array[$j]}"
                 fi
             done
         fi
