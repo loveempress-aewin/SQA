@@ -55,14 +55,13 @@ version 1.0
 如果網卡沒有到達上限 請自行改變這個檔案的數量
 
 ```log ================================================================
-R600BL,8,x4,Ver3,2bypass
-R600BL,8,x4,Ver3,2bypass
-R600BL,8,x4,Ver3,2bypass
-R600BL,8,x4,Ver3,2bypass
-R0385C,8,x4,,Nobypass.
-R0471E,8,x8,,Nobypass.
-R0471D,8,x8,Ver3,4bypass
-R602CL,8,x4,Ver3,4bypass
+R600BL,8,x4,Ver3,2 bypass
+R600BL,8,x4,Ver3,2 bypass
+R600BL,8,x4,Ver3,2 bypass
+R600BL,8,x4,Ver3,2 bypass
+R0385C,8,x4,,No bypass.
+R0471E,8,x8,,No bypass.
+R0471D,8,x8,Ver3,4 bypass
+R602CL,8,x4,Ver3,4 bypass
 ```
-1. `No bypass` => `Nobypass.` need dot
-2. `4 bypass` => `4bypass`
+1. `No bypass` => `No bypass.` need dot

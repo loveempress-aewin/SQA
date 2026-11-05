@@ -1,8 +1,8 @@
-R600BL,8,x4,Ver3,2bypass
-R600BL,8,x4,Ver3,2bypass
-R600BL,8,x4,Ver3,2bypass
-R600BL,8,x4,Ver3,2bypass
-R0385C,8,x4,,Nobypass.
-R0471E,8,x8,,Nobypass.
-R0471D,8,x8,Ver3,4bypass
-R602CL,8,x4,Ver3,4bypass
+R600BL,8,x4,Ver3,2 bypass
+R600BL,8,x4,Ver3,2 bypass
+R600BL,8,x4,Ver3,2 bypass
+R600BL,8,x4,Ver3,2 bypass
+R0385C,8,x4,,No bypass.
+R0471E,8,x8,,No bypass.
+R0471D,8,x8,Ver3,4 bypass
+R602CL,8,x4,Ver3,4 bypass

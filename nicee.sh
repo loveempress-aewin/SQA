@@ -119,25 +119,11 @@ declare -A nicee_slot_counts_array
 declare -i slot_id=0
 
 # Read MB parameter setting
-len=${#mb_labels[@]}
-# for (( i = 0; i < len; i++)); do
-#     nicee_mb_param_array[i]=$(cat $mb_param | grep "${mb_labels[i]}" | cut -d"=" -f 2 | tr -d " ")
-#     echo "nicee_mb_param[$i] : ${nicee_mb_param_array[i]}"
-# done
 
 echo -e "\n------ Mother Board ------------ "  | tee -a $csv_file
 # Read MB data from eeprom
 ./nicee -show 0  | tee -a $csv_file
 ./nicee -show 0 > $nicee_file
-# for (( i = 0; i < len; i++)); do
-#     nicee_mb_data_array[i]=$(cat $nicee_file | grep "${mb_labels[i]}" | cut -d"=" -f 2 | tr -d " ")
-#     #echo "param: ${nicee_mb_param_array[i]}"
-#     #echo "data : ${nicee_mb_data_array[i]}"
-#     if [ "${nicee_mb_param_array[i]}" != "${nicee_mb_data_array[i]}" ]; then
-#        nicee_err=1
-#        echo "Fail:${mb_labels[i]} = ${nicee_mb_param_array[i]}"
-#     fi
-# done
 
 ./nicee -show 0
 ./nicee -show 0 > ${mb_param}
@@ -173,7 +159,6 @@ do
 done < "$slot_param"
 # exit 1
 # Read nicee data of net card
-len=${#slot_labels[@]}
 if [ "$nicee_number" -ne 0 ]; then
     for (( i = 1; i <= $nicee_number; i++)); do
         echo -e "\n------ Slot$i ------------ "  | tee -a $csv_file
@@ -184,7 +169,7 @@ if [ "$nicee_number" -ne 0 ]; then
             echo "Fail:slot$i is empty."  | tee -a $csv_file
         else
             for (( j = 0; j < ${nicee_slot_counts_array[$i]}; j++)); do
-                nicee_slot_data_array[j]=$(cat $nicee_file | grep "${slot_labels[j]}" |  cut -d"=" -f 2 | tr -d ' ')
+                nicee_slot_data_array[j]=$(cat $nicee_file | grep "${slot_labels[j]}" |  cut -d"=" -f 2 |xargs )
                 #### tr -d '' -> [4 bypass] -> [4bypass]
                 # echo ${nicee_slot_param_array["$i,$j"]} ####dev mode
                 # echo "!2:${nicee_slot_data_array[$j]}"        ####dev mode
