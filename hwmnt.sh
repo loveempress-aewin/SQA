@@ -13,6 +13,8 @@ path=$1
 log_file=$2
 sample=$3
 rm -rf $log_file
+#### /root/L_1949/ccauto/hwmnt.sh temp/v1.00 ../csv/temp.csv temp
+# echo -e "1:[$path]\n2:[${log_file}]\n3:sample:[${sample}]\n4:[$4]" ####dev mode
 
 ##echo $path
 
@@ -81,7 +83,9 @@ BMC_psu_cpu1_label=("PSU0 Status" "PSU0 Vin" "PSU0 +12V" "PSU0 Fan" "PSU0 Temp."
 BMC_psu_cpu2_label=("PSU0 Status" "PSU0 Vin" "PSU0 +12V" "PSU0 Fan" "PSU0 Temp." "PSU1 Status" "PSU1 Vin" "PSU1 +12V" "PSU1 Fan" "PSU1 Temp.")
 
 # Define the label input file
-INFILE=$label_file
+# INFILE=$label_file ####你有病吧 硬要在一個變數來裝變數 意義是傻== 太無聊?
+INFILE=$(cat ${label_file}) ####fix bug ==
+printf "\n===contents=====\n%s\n==============\n\n" "${INFILE}"
 
 ############################################
 ## Make label array string
