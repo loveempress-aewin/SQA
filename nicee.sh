@@ -63,11 +63,6 @@ if [ -z "$nicee_show" ]; then
 	exit 1
 fi
 
-# nicee_number=$(cat $nicee_file | grep "slot" | cut -d"~" -f 3)
-# if [ -z $nicee_number ]; then
-#     nicee_number=0
-# fi
-
 # nicee_number=$(cat $nicee_file | grep "bypass circuits"| awk -F"=" '{print $2+0}')
 nicee_number=${NICEE_NUM_SLOT}
 # if (( ${nicee_num_slot} ))
